@@ -1,5 +1,4 @@
 import React, {createContext, useReducer} from 'react'
-import { createRoutesFromChildren } from 'react-router-dom'
 import githubReducer from './GithubReducer'
 
 const GithubContext = createContext()
@@ -86,10 +85,11 @@ export const GithubProvider = ({children}) => {
     const setLoading = () => dispatch({type: 'SET_LOADING'})
     
     return <GithubContext.Provider value = {{
-        users: state.users,
-        loading: state.loading,
-        user: state.user,
-        repos: state.repos,
+        // users: state.users,  ALL 4 OF THESE LINES CAN CONDENSE DOWN INTO THE SPREAD STATE LINE
+        // loading: state.loading,
+        // user: state.user,
+        // repos: state.repos,
+        ...state,
         searchUsers,
         getUser,
         clearUsers,
