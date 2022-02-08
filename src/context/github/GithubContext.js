@@ -1,9 +1,14 @@
 import React, {createContext, useReducer} from 'react'
 import githubReducer from './GithubReducer'
+import axios from 'axios'
 
 const GithubContext = createContext()
 
 const GITHUB_URL = process.env.REACT_APP_GITHUB_URL
+
+const github = axios.create({
+    baseURL: GITHUB_URL
+})
 
 export const GithubProvider = ({children}) => {
     const initialState = {
@@ -23,9 +28,9 @@ export const GithubProvider = ({children}) => {
             q: text
         })
 
-        const response = await fetch(`${GITHUB_URL}/search/users?${params}`)
+        const response = await github.get(`/search/users?${params}`)
 
-        const {items} = await response.json()
+        const items = response.data.items
 
         dispatch({
             type: 'GET_USERS',
@@ -38,12 +43,12 @@ export const GithubProvider = ({children}) => {
     const getUser = async(login) => {
         setLoading()
 
-        const response = await fetch(`${GITHUB_URL}/users/${login}`)
+        const response = await github.get(`/users/${login}`)
 
         if(response.status === 404) {
             window.location = '/notfound'
         } else {
-            const data = await response.json()
+            const data = response.data
     
             dispatch({
                 type: 'GET_USER',
@@ -63,9 +68,9 @@ export const GithubProvider = ({children}) => {
             per_page: 10,
         })
 
-        const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`)
+        const response = await github.get(`/users/${login}/repos?${params}`)
 
-        const data = await response.json()
+        const data = response.data
 
         dispatch({
             type: 'GET_REPOS',
